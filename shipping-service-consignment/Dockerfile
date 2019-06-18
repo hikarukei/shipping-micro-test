@@ -1,7 +1,7 @@
-`FROM debian:latest
+FROM debian:latest
 
 RUN mkdir /app
 WORKDIR /app
-ADD consigent-service /app/consignment-service
+ADD shipping-service-consignment /app/shipping-service-consignment
 
-CMD ["./consignment-service"]
+CMD ["./shipping-service-consignment"]
