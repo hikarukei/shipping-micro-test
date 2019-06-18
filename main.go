@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	_ "go/build"
 	"log"
 	"net"
 	"sync"
