@@ -1,4 +1,4 @@
-package main
+package shipping_service_consignment
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	// Import the generated protobuf code
 	pb "github.com/hikarukei/shipping-micro-test/proto/consignment"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 const (
@@ -18,22 +17,28 @@ const (
 
 type repository interface {
 	Create(*pb.Consignment) (*pb.Consignment, error)
+	GetAll() []*pb.Consignment
 }
 
-// Repository - Dummy repository to simulate the use of datastore
-// of some kind. Will be replaced with real implementation later on
+// Repository - Dummy repository, this simulates the use of a datastore
+// of some kind. We'll replace this with a real implementation later on.
 type Repository struct {
 	mu           sync.RWMutex
 	consignments []*pb.Consignment
 }
 
-// Create new consignment
+// Create a new consignment
 func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
 	repo.mu.Lock()
 	updated := append(repo.consignments, consignment)
 	repo.consignments = updated
 	repo.mu.Unlock()
 	return consignment, nil
+}
+
+// GetAll consignments
+func (repo *Repository) GetAll() []*pb.Consignment {
+	return repo.consignments
 }
 
 // Service should implement all of the methods to satisfy the service
@@ -46,37 +51,43 @@ type service struct {
 
 // CreateConsignment - we created just one method on our service,
 // which is a create method, which takes a context and a request as an
-// argument, handled by gRPC server
+// argument, these are handled by the gRPC server.
 func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment) (*pb.Response, error) {
-	// save our consignment
+
+	// Save our consignment
 	consignment, err := s.repo.Create(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Return matching the 'Response' message we created in our protobuf definition
+	// Return matching the `Response` message we created in our
+	// protobuf definition.
 	return &pb.Response{Created: true, Consignment: consignment}, nil
 }
 
+// GetConsignments -
+func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.Response, error) {
+	consignments := s.repo.GetAll()
+	return &pb.Response{Consignments: consignments}, nil
+}
+
 func main() {
+
 	repo := &Repository{}
 
-	// Set-up our gRPC server
+	// Set-up our gRPC server.
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 
-	// Register our service with gRPC server, this will tie our
-	// Implementation into the auto-generated interface code for our
-	// protobuf definition
+	// Register our service with the gRPC server, this will tie our
+	// implementation into the auto-generated interface code for our
+	// protobuf definition.
 	pb.RegisterShippingServiceServer(s, &service{repo})
 
-	// Register reflection service on gRPC server
-	reflection.Register(s)
-
-	log.Println("Running on port: ", port)
+	log.Println("Running on port:", port)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

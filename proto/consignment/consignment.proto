@@ -31,7 +31,5 @@ message GetRequest {}
 message Response {
   bool created = 1;
   Consignment consignment = 2;
-
-  // Added a pluralised consignment to our generic response message
   repeated Consignment consignments = 3;
 }
