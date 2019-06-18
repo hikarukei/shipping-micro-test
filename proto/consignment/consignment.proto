@@ -5,8 +5,6 @@ package consignment;
 
 service ShippingService {
   rpc CreateConsignment(Consignment) returns (Response) {}
-
-  // Created a new method
   rpc GetConsignments(GetRequest) returns (Response) {}
 }
 
