@@ -1,5 +1,5 @@
 // shipping-micro-test/main.go
-package consignment_cli
+package main
 
 import (
 	"encoding/json"
