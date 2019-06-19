@@ -5,7 +5,7 @@ build:
     # Build the Golang code for Linux OS and amd64 architecture
 	GOOS=linux GOARCH=amd64 go build
 	# Build the app into docker image
-	sudo docker build -t shipping-service-consignment
+	sudo docker build -t shipping-service-consignment .
 
 run:
 	# run the docker image of this app in detached mode, expose at port 50051
