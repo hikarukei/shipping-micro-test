@@ -8,7 +8,7 @@ build:
 	sudo docker build -t shipping-service-consignment
 
 run:
-	# run the docker image of this app in detached mode, exposed at port 50051
+	# run the docker image of this app in detached mode, expose at port 50051
 	sudo docker run -p 50051:50051 \
 		-e MICRO_SERVER_ADDRESS=:50051 \
 		shipping-service-consignment

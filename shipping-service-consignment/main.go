@@ -70,14 +70,15 @@ func main() {
 
 	// Create new service. Optionally include some options here
 	srv := micro.NewService(
-		micro.Name("shipment.service.consignment"),
+		// This name must match the package name given in your protobuf definition
+		micro.Name("shipping.service.consignment"),
 	)
 
 	// Init will parse the command line flags
 	srv.Init()
 
 	// Register handler
-	pb.RegisterShippingServiceServer(srv.Server(), &service{repo})
+	pb.RegisterShippingServiceHandler(srv.Server(), &service{repo})
 
 	// Run the server
 	if err := srv.Run(); err != nil {
